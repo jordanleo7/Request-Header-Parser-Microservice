@@ -21,11 +21,11 @@ if (!process.env.DISABLE_XORIGIN) {
       
       var head = req.headers;
       var answer = new Object();
-      answer.ipaddress = head['x-forwarded-for'].split(',');
-      answer.software = head['user-agent'];
+      answer.ipaddress = head['x-forwarded-for'].split(',')[0];
       answer.language = head['accept-language'];
-      
-      res.send(JSON.stringify(head) + '<br/><br/>' + JSON.stringify(answer));
+      answer.software = head['user-agent'].split(/\(([^)]+)\)/)[1];
+
+      res.send(JSON.stringify(answer));
     }
     next();
   });
