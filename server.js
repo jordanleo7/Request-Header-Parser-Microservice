@@ -8,7 +8,7 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
-
+var os = require('os');
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -18,6 +18,14 @@ if (!process.env.DISABLE_XORIGIN) {
          console.log(origin);
          res.setHeader('Access-Control-Allow-Origin', origin);
          res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      
+      var head = req.headers;
+      var answer = new Object();
+      answer.ipaddress = head['x-forwarded-for'].split(',');
+      answer.software = head['user-agent'];
+      answer.language = head['accept-language'];
+      
+      res.send(JSON.stringify(head) + '<br/><br/>' + JSON.stringify(answer));
     }
     next();
   });
@@ -57,4 +65,3 @@ app.use(function(err, req, res, next) {
 app.listen(process.env.PORT, function () {
   console.log('Node.js listening ...');
 });
-
